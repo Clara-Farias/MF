@@ -63,14 +63,16 @@
   }
 
   /* ===== Corpo físico do totem =====
-     Mantém sempre a proporção retrato (9:16), não importa o formato
-     da janela/monitor onde o arquivo for aberto. Numa tela vertical de
-     verdade (o totem), isso preenche 100% sem sobrar nada. */
+     Canvas de referência fixo em 450×800 (proporção 9:16), no tamanho em
+     que o design foi desenhado. Um script no fim da página aplica um
+     transform:scale() nesse canvas para preencher 100% da tela real do
+     totem — qualquer que seja a resolução física do monitor — sem sobras
+     de espaço e sem precisar recalcular cada medida do layout. */
   .kiosk{
     position:relative;
-    height:90vh;
-    width:min(90vw, calc(90vh * 9 / 16));
-    aspect-ratio:9/16;
+    width:450px;
+    height:800px;
+    transform-origin:center center;
   }
   .kiosk::before{display:none;}
   .kiosk::after{display:none;}
@@ -574,6 +576,36 @@
 </div>
 
 <script>
+  /* ===== Ajuste de proporção para a tela real do totem =====
+     O conteúdo é desenhado num canvas fixo de 450×800 (9:16). Aqui a gente
+     escala esse canvas inteiro para caber na tela real do totem, não
+     importa a resolução física do monitor — preenche o máximo possível
+     mantendo a proporção original, sem esticar nem cortar nada. */
+  (function fitKioskToScreen(){
+    var REF_W = 450, REF_H = 800;
+    var kiosk = document.querySelector('.kiosk');
+    function fit(){
+      var scale = Math.min(window.innerWidth / REF_W, window.innerHeight / REF_H);
+      kiosk.style.transform = 'scale(' + scale + ')';
+    }
+    fit();
+    window.addEventListener('resize', fit);
+    window.addEventListener('orientationchange', fit);
+    window.addEventListener('fullscreenchange', fit);
+  })();
+
+  /* No primeiro toque na tela, pede tela cheia — some com a barra de
+     endereço do navegador que aparece hoje no alto do totem. */
+  (function goFullscreenOnFirstTouch(){
+    function tryFullscreen(){
+      var el = document.documentElement;
+      var req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+      if(req) req.call(el).catch(function(){});
+    }
+    document.addEventListener('touchstart', tryFullscreen, {once:true});
+    document.addEventListener('click', tryFullscreen, {once:true});
+  })();
+
   function go(id){
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
