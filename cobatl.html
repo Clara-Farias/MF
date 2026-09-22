@@ -57,43 +57,31 @@
   html,body{height:100%;}
   body{
     font-family:'Manrope',sans-serif;
-    background:
-      radial-gradient(circle at 20% 15%, #3a3a32 0%, #1c1c18 55%, #0d0d0b 100%);
+    background:#000;
+    margin:0;width:100vw;height:100vh;overflow:hidden;
     display:flex;align-items:center;justify-content:center;
-    min-height:100vh;
-    padding:40px 20px;
   }
 
-  /* ===== Corpo físico do totem ===== */
+  /* ===== Corpo físico do totem =====
+     Mantém sempre a proporção retrato (9:16), não importa o formato
+     da janela/monitor onde o arquivo for aberto. Numa tela vertical de
+     verdade (o totem), isso preenche 100% sem sobrar nada. */
   .kiosk{
     position:relative;
-    width:400px;
-    padding:22px 22px 40px;
-    border-radius:38px;
-    background:linear-gradient(160deg,#3d3d36 0%,#232320 45%,#141412 100%);
-    box-shadow:
-      0 60px 100px -20px rgba(0,0,0,.65),
-      inset 0 1px 0 rgba(255,255,255,.06);
+    height:100vh;
+    width:min(100vw, calc(100vh * 9 / 16));
+    aspect-ratio:9/16;
   }
-  .kiosk::before{
-    content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);
-    width:8px;height:8px;border-radius:50%;
-    background:radial-gradient(circle at 35% 35%, #6b6b62, #1c1c18);
-  }
-  .kiosk::after{
-    content:"MEIRELES & FREITAS · COBRANÇA DIGITAL";
-    position:absolute;bottom:14px;left:0;right:0;text-align:center;
-    font-size:8.5px;letter-spacing:.16em;color:#8a8a7e;font-weight:600;
-  }
+  .kiosk::before{display:none;}
+  .kiosk::after{display:none;}
 
   .screenwrap{
     position:relative;
-    border-radius:22px;
+    width:100%;height:100%;
     overflow:hidden;
-    box-shadow:inset 0 0 0 2px rgba(0,0,0,.35);
   }
   .totem{
-    width:100%;height:720px;
+    width:100%;height:100%;
     background:var(--bg);
     position:relative;
     overflow:hidden;
@@ -178,6 +166,11 @@
   /* ===== Escolha do canal — blocos editoriais ===== */
   #schoice{padding:0;background:var(--bg);}
   .rh-top{padding:28px 26px 24px;}
+  .rh-back{
+    appearance:none;border:none;background:transparent;cursor:pointer;
+    font-family:'Manrope',sans-serif;font-size:12px;font-weight:700;
+    color:var(--ink-soft);padding:0;margin-bottom:18px;
+  }
   .rh-header{
     display:flex;justify-content:space-between;align-items:center;
     font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
@@ -455,6 +448,7 @@
 
       <div class="screen" id="schoice">
         <div class="rh-top">
+          <button class="rh-back" onclick="go('sentry')">← Início</button>
           <h1 class="rh-title">Resolva<br>hoje.</h1>
           <p class="rh-sub">Descubra como encantar e converter, mesmo cobrando. <b>Para começar, toque em uma das opções abaixo.</b></p>
         </div>
